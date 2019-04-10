@@ -12,6 +12,7 @@
             "env" :{
                 "DB_USERNAME": "luke",
                 "DB_PASSWORD" : "secret"
+               
 
             }
         }
