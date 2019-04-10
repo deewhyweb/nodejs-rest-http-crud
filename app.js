@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
  *
@@ -18,40 +18,66 @@
  *
  */
 
-const path = require('path');
-const express = require('express');
-const bodyParser = require('body-parser');
+const path = require("path");
+const express = require("express");
+const bodyParser = require("body-parser");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJSDoc = require("swagger-jsdoc");
 
 const app = express();
 
-const probe = require('kube-probe');
-const db = require('./lib/db');
+const probe = require("kube-probe");
+const db = require("./lib/db");
+var swaggerDefinition = {
+  info: {
+    // API informations (required)
+    title: "Fruits", // Title (required)
+    version: "0.0.1", // Version (required)
+    description: "A sample RESTful API" // Description (optional)
+  },
+  basePath: "/" // Base path (optional)
+};
 
-const fruits = require('./lib/routes/fruits');
+// Options for the swagger docs
+var options = {
+  // Import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // Path to the API docs
+  apis: ["./lib/routes/fruits.js"]
+};
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+const fruits = require("./lib/routes/fruits");
 
 app.use(bodyParser.json());
 app.use((error, req, res, next) => {
-  if (req.body === '' || (error instanceof SyntaxError && error.type === 'entity.parse.failed')) {
+  if (
+    req.body === "" ||
+    (error instanceof SyntaxError && error.type === "entity.parse.failed")
+  ) {
     res.status(415);
-    return res.send('Invalid payload!');
+    return res.send("Invalid payload!");
   }
 
   next();
 });
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
-app.use('/licenses', express.static(path.join(__dirname, 'licenses')));
+app.use("/licenses", express.static(path.join(__dirname, "licenses")));
 
-app.use('/api', fruits);
+app.use("/api", fruits);
 
 // Add a health check
 probe(app);
 
-db.init().then(() => {
-  console.log('Database init\'d');
-}).catch(error => {
-  console.log(error);
-});
+db.init()
+  .then(() => {
+    console.log("Database init'd");
+  })
+  .catch(error => {
+    console.log(error);
+  });
 
 module.exports = app;
