@@ -97,4 +97,13 @@ db.init()
     console.log(error);
   });
 
+process.on("SIGTERM", function onSigterm() {
+  console.info(
+    "Got SIGTERM. Graceful shutdown start now",
+    new Date().toISOString()
+  );
+  db.end();
+  console.info("DB Shutdown");
+});
+
 module.exports = app;
