@@ -46,7 +46,7 @@ var options = {
   apis: ["./lib/routes/fruits.js"]
 };
 const swaggerSpec = swaggerJSDoc(options);
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const fruits = require("./lib/routes/fruits");
 
