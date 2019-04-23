@@ -16,9 +16,8 @@
     "release": "standard-version -a",
     "openshift": "nodeshift --strictSSL=false --nodeVersion=10.x",
     "postinstall": "license-reporter report -s && license-reporter save -s --xml licenses.xml",
-    "start": "node ."
+    "start": "node app.js"
   },
-  "main": "./bin/www",
   "standard-version": {
     "scripts": {
       "postbump": "npm run postinstall && node release.js",
@@ -69,6 +68,7 @@
     "body-parser": "~1.18.0",
     "debug": "^4.0.1",
     "express": "4.16.4",
+    "express-routes-versioning": "^1.0.1",
     "kube-probe": "^0.3.1",
     "license-reporter": "^1.2.0",
     "pg": "^7.8.2",

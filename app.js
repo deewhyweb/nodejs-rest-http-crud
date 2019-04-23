@@ -23,12 +23,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
-
+const debug = require('debug')('nodejs-rest-http-crud:server');
+const http = require('http');
 const app = express();
-
 const probe = require("kube-probe");
-
 const db = require("./lib/db");
+const routesVersioning = require('express-routes-versioning')();
 
 let livenessCallback = (req, res) => {
   db.query("select now()", err => {
@@ -65,7 +65,8 @@ var options = {
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-const fruits = require("./lib/routes/fruits");
+const fruitsV1 = require("./lib/routes/v1/fruits");
+const fruitsV2 = require("./lib/routes/v2/fruits");
 
 app.use(bodyParser.json());
 app.use((error, req, res, next) => {
@@ -84,7 +85,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
 app.use("/licenses", express.static(path.join(__dirname, "licenses")));
 
-app.use("/api", fruits);
+app.use('/api', routesVersioning({
+  "1.0.0": fruitsV1,
+  "^2.0.0": fruitsV2
+}, fruitsV1));
 
 // Add a health check
 
@@ -106,4 +110,78 @@ process.on("SIGTERM", function onSigterm() {
   console.info("DB Shutdown");
 });
 
-module.exports = app;
+const port = normalizePort(process.env.PORT || '8080');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort (val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError (error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  const bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening () {
+  const addr = server.address();
+  const bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
