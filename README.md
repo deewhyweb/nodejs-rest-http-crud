@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/nodeshift-starters/nodejs-rest-http-crud.svg?branch=master)](https://travis-ci.org/nodeshift-starters/nodejs-rest-http-crud) [![Coverage Status](https://coveralls.io/repos/github/nodeshift-starters/nodejs-rest-http-crud/badge.svg?branch=master)](https://coveralls.io/github/nodeshift-starters/nodejs-rest-http-crud?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/nodeshift-starters/nodejs-rest-http-crud.svg)](https://greenkeeper.io/)
-
-Example CRUD Application
+# Example Container Native Node.js Application
 
 ### Getting Started
 
@@ -18,10 +16,10 @@ In this example, the db user is `luke`, the password is `secret` and the databas
 
 You can then start the application like this:
 
-`DB_USERNAME=luke DB_PASSWORD=secret ./bin/www`
+`DB_USERNAME=luke DB_PASSWORD=secret npm start`
 
 
-Then go to http://localhost:3000
+Then go to http://localhost:8080
 
 
 #### Running on Minishift

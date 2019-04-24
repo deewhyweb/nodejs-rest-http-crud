@@ -37,7 +37,7 @@
     "package.json",
     "app.js",
     "public",
-    "bin",
+    "config.js",
     "lib",
     "LICENSE",
     "licenses"
@@ -68,7 +68,6 @@
     "body-parser": "~1.18.0",
     "debug": "^4.0.1",
     "express": "4.16.4",
-    "express-routes-versioning": "^1.0.1",
     "kube-probe": "^0.3.1",
     "license-reporter": "^1.2.0",
     "pg": "^7.8.2",

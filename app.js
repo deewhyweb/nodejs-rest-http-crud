@@ -28,7 +28,9 @@ const http = require('http');
 const app = express();
 const probe = require("kube-probe");
 const db = require("./lib/db");
-const routesVersioning = require('express-routes-versioning')();
+const config = require('./config.js');
+const fruitsV1 = require("./lib/routes/v1/fruits");
+const fruitsV2 = require("./lib/routes/v2/fruits");
 
 let livenessCallback = (req, res) => {
   db.query("select now()", err => {
@@ -45,28 +47,26 @@ let livenessCallback = (req, res) => {
 const probeOptions = {
   livenessCallback: livenessCallback
 };
-var swaggerDefinition = {
-  info: {
-    // API informations (required)
-    title: "Fruits", // Title (required)
-    version: "0.0.1", // Version (required)
-    description: "A sample RESTful API" // Description (optional)
-  },
-  basePath: "/" // Base path (optional)
-};
 
-// Options for the swagger docs
-var options = {
+const useSchema = (path,version) => (...args) => swaggerUi.setup(swaggerJSDoc({
   // Import swaggerDefinitions
-  swaggerDefinition: swaggerDefinition,
+  swaggerDefinition : {
+    info: {
+      // API informations (required)
+      title: config.applicationName, // Title (required)
+      version, // Version (required)
+      description: "A sample RESTful API" // Description (optional)
+    },
+    basePath: "/" // Base path (optional)
+  },
   // Path to the API docs
-  apis: ["./lib/routes/fruits.js"]
-};
-const swaggerSpec = swaggerJSDoc(options);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  apis: path
+}))(...args);
+app.use("/api/v1/docs", swaggerUi.serve, useSchema(["./lib/routes/v1/fruits.js"], '1.0.0'));
+app.use("/api/v2/docs", swaggerUi.serve, useSchema([ "./lib/routes/v2/fruits.js"], '2.0.0'));
 
-const fruitsV1 = require("./lib/routes/v1/fruits");
-const fruitsV2 = require("./lib/routes/v2/fruits");
+
+
 
 app.use(bodyParser.json());
 app.use((error, req, res, next) => {
@@ -85,10 +85,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
 app.use("/licenses", express.static(path.join(__dirname, "licenses")));
 
-app.use('/api', routesVersioning({
-  "1.0.0": fruitsV1,
-  "^2.0.0": fruitsV2
-}, fruitsV1));
+app.use('/api/v1', fruitsV1);
+app.use('/api/v2', fruitsV2);
 
 // Add a health check
 
