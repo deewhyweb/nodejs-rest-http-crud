@@ -42,17 +42,23 @@ oc project istio-operator
 
 oc adm policy add-cluster-role-to-user cluster-admin developer
 
-Deploy istio control pane
+oc new-project istio-system
+
+oc create clusterrolebinding root-cluster-admin-binding2 --clusterrole=cluster-admin --user=system:serviceaccount:istio-system:istio-sidecar-injector-service-account
+
 
 
 oc create -f istio-installation.yaml
-
 
 nvm use 10.15
 
 oc login -u developer
 
+oc adm policy add-scc-to-user privileged -z default -n myproject
+
 oc project myproject
+
+oc new-app -e POSTGRESQL_USER=luke -ePOSTGRESQL_PASSWORD=secret -ePOSTGRESQL_DATABASE=my_data openshift/postgresql-92-centos7 --name=my-database
 
 npm run openshift
 
