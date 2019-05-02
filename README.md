@@ -1,5 +1,21 @@
 # Example Container Native Node.js Application
 
+Demonstrating:
+
+* Tracing
+* Unit Tests
+* Nodeshift
+* local debugging
+* Shutdown signal handlers
+* Timeouts
+* Consistent logging
+* Secrets
+* Probes
+* Software version
+* Api versioning
+* Swagger
+
+
 ### Getting Started
 
 #### Running Locally
@@ -32,6 +48,8 @@ Start the cluster with
 
 `oc login -u system:admin`
 
+`oc adm policy add-scc-to-user privileged -z default -n myproject`
+
 `oc project istio-operator`
 
 `oc adm policy add-cluster-role-to-user cluster-admin developer`
@@ -41,8 +59,6 @@ Start the cluster with
 `nvm use 10.15`
 
 `oc login -u developer`
-
-`oc adm policy add-scc-to-user privileged -z default -n myproject`
 
 `oc project myproject`
 
