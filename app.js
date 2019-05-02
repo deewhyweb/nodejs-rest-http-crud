@@ -1,5 +1,4 @@
 "use strict";
-
 /*
  *
  *  Copyright 2016-2017 Red Hat, Inc, and individual contributors.
@@ -21,52 +20,13 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
-const swaggerUi = require("swagger-ui-express");
-const swaggerJSDoc = require("swagger-jsdoc");
-const debug = require('debug')('nodejs-rest-http-crud:server');
-const http = require('http');
 const app = express();
-const probe = require("kube-probe");
+const probe = require('./lib/probe')
 const db = require("./lib/db");
 const config = require('./config.js');
 const fruitsV1 = require("./lib/routes/v1/fruits");
 const fruitsV2 = require("./lib/routes/v2/fruits");
-
-let livenessCallback = (req, res) => {
-  db.query("select now()", err => {
-    if (!err) {
-      res.writeHead(200);
-      res.end("OK");
-    } else {
-      console.log("liveness not ok");
-      res.writeHead(500);
-      res.end("not ok");
-    }
-  });
-};
-const probeOptions = {
-  livenessCallback: livenessCallback
-};
-
-const useSchema = (path,version) => (...args) => swaggerUi.setup(swaggerJSDoc({
-  // Import swaggerDefinitions
-  swaggerDefinition : {
-    info: {
-      // API informations (required)
-      title: config.applicationName, // Title (required)
-      version, // Version (required)
-      description: "A sample RESTful API" // Description (optional)
-    },
-    basePath: "/" // Base path (optional)
-  },
-  // Path to the API docs
-  apis: path
-}))(...args);
-app.use("/api/v1/docs", swaggerUi.serve, useSchema(["./lib/routes/v1/fruits.js"], '1.0.0'));
-app.use("/api/v2/docs", swaggerUi.serve, useSchema([ "./lib/routes/v2/fruits.js"], '2.0.0'));
-
-
-
+require('./lib/swagger')(app);
 
 app.use(bodyParser.json());
 app.use((error, req, res, next) => {
@@ -77,7 +37,6 @@ app.use((error, req, res, next) => {
     res.status(415);
     return res.send("Invalid payload!");
   }
-
   next();
 });
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -93,7 +52,7 @@ app.use('/api/v2', fruitsV2);
 db.init()
   .then(() => {
     console.log("Database init'd, starting probe");
-    probe(app, probeOptions);
+    probe.init(app);
   })
   .catch(error => {
     console.log(error);
@@ -108,26 +67,4 @@ process.on("SIGTERM", function onSigterm() {
   console.info("DB Shutdown");
 });
 
-const port = normalizePort(process.env.PORT || '8080');
-app.set('port', port);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort (val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
 module.exports = app;
