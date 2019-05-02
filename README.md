@@ -38,15 +38,11 @@ Then run `npm run openshift` to deploy your app
 
 Then you can navigate to the newly exposed route, something similar to "http://nodejs-rest-http-crud-boosters.192.168.99.100.nip.io/",  this will probably be different based on your Minishift IP address
 
+ oc login -u system:admin 
+
 oc project istio-operator
 
 oc adm policy add-cluster-role-to-user cluster-admin developer
-
-oc new-project istio-system
-
-oc create clusterrolebinding root-cluster-admin-binding2 --clusterrole=cluster-admin --user=system:serviceaccount:istio-system:istio-sidecar-injector-service-account
-
-
 
 oc create -f istio-installation.yaml
 
