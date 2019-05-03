@@ -23,9 +23,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const probe = require('./lib/probe')
 const db = require("./lib/db");
-const config = require('./config.js');
-const fruitsV1 = require("./lib/routes/v1/fruits");
-const fruitsV2 = require("./lib/routes/v2/fruits");
+const api= require('./lib/routes/api');
 require('./lib/swagger')(app);
 
 app.use(bodyParser.json());
@@ -43,9 +41,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
 app.use("/licenses", express.static(path.join(__dirname, "licenses")));
+app.use('/api/', api);
 
-app.use('/api/v1', fruitsV1);
-app.use('/api/v2', fruitsV2);
 
 // Add a health check
 
