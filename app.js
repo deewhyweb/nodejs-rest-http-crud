@@ -16,15 +16,14 @@
  *  limitations under the License.
  *
  */
-
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const probe = require('./lib/probe')
-const db = require("./lib/db");
-const api= require('./lib/routes/api');
-require('./lib/swagger')(app);
+const probe = require("./lib/probe");
+const api = require("./lib/routes/api");
+const shutdown = require("./lib/shutdown");
+require("./lib/swagger")(app);
 
 app.use(bodyParser.json());
 app.use((error, req, res, next) => {
@@ -41,27 +40,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
 app.use("/licenses", express.static(path.join(__dirname, "licenses")));
-app.use('/api/', api);
-
+app.use("/api/", api);
 
 // Add a health check
+probe.init(app);
 
-db.init()
-  .then(() => {
-    console.log("Database init'd, starting probe");
-    probe.init(app);
-  })
-  .catch(error => {
-    console.log(error);
-  });
-
-process.on("SIGTERM", function onSigterm() {
-  console.info(
-    "Got SIGTERM. Graceful shutdown start now",
-    new Date().toISOString()
-  );
-  db.end();
-  console.info("DB Shutdown");
-});
+process.on("SIGTERM", shutdown);
 
 module.exports = app;
