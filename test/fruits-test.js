@@ -20,9 +20,13 @@ test('test GET all fruits', t => {
     '../../api/fruits': mockApi
   });
 
+  const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
 
   supertest(app)
@@ -46,9 +50,13 @@ test('test GET all fruits - error', t => {
     '../../api/fruits': mockApi
   });
 
+  const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
 
   supertest(app)
@@ -72,9 +80,13 @@ test('test GET fruit', t => {
     '../../api/fruits': mockApi
   });
 
+  const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
 
   supertest(app)
@@ -98,9 +110,13 @@ test('test GET fruit - return 404', t => {
     '../../api/fruits': mockApi
   });
 
+  const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
 
   supertest(app)
@@ -122,11 +138,14 @@ test('test GET fruit - error', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .get('/api/v1/fruits/1')
     .expect(400)
@@ -154,11 +173,14 @@ test('test POST fruit', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .post('/api/v1/fruits')
     .send(fruitData)
@@ -238,11 +260,14 @@ test('test POST fruit - error', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .post('/api/v1/fruits')
     .send(fruitData)
@@ -375,11 +400,14 @@ test('test PUT fruit', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .put('/api/v1/fruits/20')
     .send(fruitData)
@@ -456,11 +484,14 @@ test('test PUT fruit - not found', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .put('/api/v1/fruits/20')
     .send(fruitData)
@@ -489,11 +520,14 @@ test('test PUT fruit - error', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .put('/api/v1/fruits/22')
     .send(fruitData)
@@ -598,11 +632,14 @@ test('test DELETE fruit', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .delete('/api/v1/fruits/1')
     .expect(204)
@@ -623,11 +660,14 @@ test('test DELETE fruit - error - not found', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .delete('/api/v1/fruits/1')
     .expect(404)
@@ -649,11 +689,14 @@ test('test DELETE fruit - error', t => {
     '../../api/fruits': mockApi
   });
 
+ const apiStub = proxyquire('../lib/routes/api', {
+    './v1/fruits': routesStub
+  })
+
   const app = proxyquire('../app', {
     './lib/db': mockDb,
-    './lib/routes/v1/fruits': routesStub
+    './lib/routes/api': apiStub
   });
-
   supertest(app)
     .delete('/api/v1/fruits/1')
     .expect(400)
