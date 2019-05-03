@@ -22,22 +22,14 @@ const bodyParser = require("body-parser");
 const app = express();
 const probe = require("./lib/probe");
 const api = require("./lib/routes/api");
-const shutdown = require("./lib/shutdown");
+const utils = require('./lib/utils');
 require("./lib/swagger")(app);
 
 app.use(bodyParser.json());
-app.use((error, req, res, next) => {
-  if (
-    req.body === "" ||
-    (error instanceof SyntaxError && error.type === "entity.parse.failed")
-  ) {
-    res.status(415);
-    return res.send("Invalid payload!");
-  }
-  next();
-});
+app.use(utils.expressErrorHandler);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
 // Expose the license.html at http[s]://[host]:[port]/licences/licenses.html
 app.use("/licenses", express.static(path.join(__dirname, "licenses")));
 app.use("/api/", api);
@@ -45,6 +37,7 @@ app.use("/api/", api);
 // Add a health check
 probe.init(app);
 
-process.on("SIGTERM", shutdown);
+// setup graceful shutdown
+process.on("SIGTERM", utils.onSigterm);
 
 module.exports = app;
