@@ -1,4 +1,5 @@
 const debug = require('debug')('nodejs-rest-http-crud:server');
+const config = require('./config');
 const http = require('http');
 const app = require('./app');
 
@@ -36,8 +37,12 @@ const server = http.createServer(app);
  */
 
 server.listen(port);
+
+server.timeout = config.serverTimeout;
+
 server.on('error', onError);
 server.on('listening', onListening);
+server.on('timeout', onTimeout);
 
 
 
@@ -79,3 +84,10 @@ function onListening () {
   console.log('Listening on ' + bind);
 }
 
+/**
+ * Event listener for HTTP server "timeout" event.
+ */
+function onTimeout (socket) {
+  console.log('Timeout connection from ' + socket.remoteAddress);
+  socket.end();
+}

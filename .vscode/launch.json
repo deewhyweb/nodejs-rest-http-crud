@@ -9,10 +9,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/app.js",
+            "program": "${workspaceFolder}/server.js",
             "env" :{
                 "DB_USERNAME": "luke",
-                "DB_PASSWORD" : "secret"
+                "DB_PASSWORD" : "secret",
+                "SERVER_TIMEOUT" : "15000"
                
 
             }
