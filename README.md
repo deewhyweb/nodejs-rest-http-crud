@@ -37,6 +37,9 @@ You can then start the application like this:
 
 Then go to http://localhost:8080
 
+#### Running test
+
+`DB_USERNAME=luke DB_PASSWORD=secret npm test`
 
 #### Running on Minishift
 
@@ -65,4 +68,7 @@ Start the cluster with
 `oc new-app -e POSTGRESQL_USER=luke -ePOSTGRESQL_PASSWORD=secret -ePOSTGRESQL_DATABASE=my_data openshift/postgresql-92-centos7 --name=my-database`
 
 `npm run openshift`
+
+`http://nodejs-rest-http-crud-myproject.127.0.0.1.nip.io/api/v1/fruits`
+
 
